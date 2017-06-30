@@ -1,0 +1,40 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/service_container.html
+
+parameters:
+    jms_serializer.camel_case_naming_strategy.class: JMS\Serializer\Naming\IdenticalPropertyNamingStrategy
+    app.service.PetApi: 'api.mocks.PetApi'
+    app.service.StoreApi: 'api.mocks.StoreApi'
+    app.service.UserApi: 'api.mocks.UserApi'
+
+services:
+    app.controller.PetApi:
+      class: ApiBundle\Controllers\PetApi
+      calls:
+          - [setPetApiService,  [%app.service.PetApiService%]]
+          - [setValidator,      ['@validator']]
+          - [setSerializer,     ['@jms_serializer']]
+
+    api.mocks.PetApi:
+      class: AppBundle\Service\MockPetApiService
+
+    app.controller.StoreApi:
+      class: ApiBundle\Controllers\StoreApi
+      calls:
+          - [setStoreApiService,  [%app.service.StoreApiService%]]
+          - [setValidator,      ['@validator']]
+          - [setSerializer,     ['@jms_serializer']]
+
+    api.mocks.StoreApi:
+      class: AppBundle\Service\MockStoreApiService
+
+    app.controller.UserApi:
+      class: ApiBundle\Controllers\UserApi
+      calls:
+          - [setUserApiService,  [%app.service.UserApiService%]]
+          - [setValidator,      ['@validator']]
+          - [setSerializer,     ['@jms_serializer']]
+
+    api.mocks.UserApi:
+      class: AppBundle\Service\MockUserApiService
+

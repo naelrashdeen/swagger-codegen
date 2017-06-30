@@ -1,0 +1,28 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/service_container.html
+
+{{#apiInfo}}
+parameters:
+    jms_serializer.camel_case_naming_strategy.class: JMS\Serializer\Naming\IdenticalPropertyNamingStrategy
+{{#apis}}
+{{#operations}}
+    app.service.{{classname}}: 'api.mocks.{{classname}}'
+{{/operations}}
+{{/apis}}
+
+services:
+{{#apis}}
+{{#operations}}
+    app.controller.{{classname}}:
+      class: ApiBundle\{{package}}\{{classname}}
+      calls:
+          - [set{{classname}}Service,  [%app.service.{{classname}}Service%]]
+          - [setValidator,      ['@validator']]
+          - [setSerializer,     ['@jms_serializer']]
+
+    api.mocks.{{classname}}:
+      class: AppBundle\Service\Mock{{classname}}Service
+
+{{/operations}}
+{{/apis}}
+{{/apiInfo}}

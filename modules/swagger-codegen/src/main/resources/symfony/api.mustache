@@ -1,0 +1,363 @@
+<?php
+
+{{>licenseInfo}}
+
+namespace {{package}};
+
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use JMS\Serializer\Serializer;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+// Need proper path to the ServiceInterface...
+use {{classname}}ServiceInterface;
+
+
+{{#operations}}
+class {{classname}}
+{
+    private ${{classname}}Service;
+    private $validator;
+    private $serializer;
+
+    public function set{{classname}}Service({{classname}}ServiceInterface $service)
+    {
+        $this->{{classname}}Service = $service;
+    }
+
+    public function setValidator(ValidatorInterface $validator)
+    {
+        $this->validator = $validator;
+    }
+
+    public function setSerializer(Serializer $serializer)
+    {
+        $this->serializer = $serializer;
+    }
+
+    {{#operation}}
+    /**
+     * Operation {{{operationId}}}
+     * {{{summary}}}.
+     *
+     {{#pathParams}}
+     * @param {{dataType}} ${{paramName}} {{description}} {{#required}}(required){{/required}}{{^required}}(optional{{#defaultValue}}, default to {{{.}}}{{/defaultValue}}){{/required}}
+     {{/pathParams}}
+     {{#returnType}}
+     * @return {{returnType}}
+     {{/returnType}}
+     */
+    public function {{operationId}}(Request $request{{#pathParams}}, ${{paramName}}{{/pathParams}})
+    {
+        $inputData = [];
+        {{#allParams}}
+        // Unwrap parameter value
+        {{#isBodyParam}}
+        $inputData['{{paramName}}'] = $request->request->get('{{paramName}}');
+        {{/isBodyParam}}
+        {{#isHeaderParam}}
+        $inputData['{{paramName}}'] = $request->headers->get('{{paramName}}');
+        {{/isHeaderParam}}
+        {{#isQueryParam}}
+        $inputData['{{paramName}}'] = $request->query->get('{{paramName}}');
+        {{/isQueryParam}}
+        {{#isPathParam}}
+        $inputData['{{paramName}}'] = ${{paramName}};
+        {{/isPathParam}}
+
+        $asserts = [];
+
+        {{^isPrimitiveType}}
+        {{^isListContainer}}
+            {{^isDate}}
+            {{^isDateTime}}
+        $asserts[] = new Assert\Type("{{dataType}}");
+            {{/isDateTime}}
+            {{/isDate}}
+            {{#isDate}}
+        $asserts[] = new Assert\Date();
+            {{/isDate}}
+            {{#isDateTime}}
+        $asserts[] = new Assert\DateTime();
+            {{/isDateTime}}
+        {{/isListContainer}}
+        {{#isListContainer}}
+        $asserts[] = new Assert\All([
+            {{#items}}
+            new Assert\Type("{{dataType}}")
+            {{/items}}
+        ]);
+        {{/isListContainer}}
+        {{/isPrimitiveType}}
+        {{#isPrimitiveType}}
+        {{#isListContainer}}
+        $asserts[] = new Assert\All([
+            {{#items}}
+                {{#isString}}
+            new Assert\Type("string")
+                {{/isString}}
+                {{#isInteger}}
+            new Assert\Type("integer")
+                {{/isInteger}}
+                {{#isLong}}
+            new Assert\Type("long")
+                {{/isLong}}
+                {{#isBoolean}}
+            new Assert\Type("boolean")
+                {{/isBoolean}}
+                {{#isFloat}}
+            new Assert\Type("float")
+                {{/isFloat}}
+                {{#isDouble}}
+            new Assert\Type("double")
+                {{/isDouble}}
+            {{/items}}
+        ]);
+        {{/isListContainer}}
+        {{^isListContainer}}
+            {{#isString}}
+        $asserts[] = new Assert\Type("string");
+            {{/isString}}
+            {{#isInteger}}
+        $asserts[] = new Assert\Type("integer");
+            {{/isInteger}}
+            {{#isLong}}
+        $asserts[] = new Assert\Type("long");
+            {{/isLong}}
+            {{#isBoolean}}
+        $asserts[] = new Assert\Type("boolean");
+            {{/isBoolean}}
+            {{#isFloat}}
+        $asserts[] = new Assert\Type("float");
+            {{/isFloat}}
+            {{#isDouble}}
+        $asserts[] = new Assert\Type("double");
+            {{/isDouble}}
+        {{/isListContainer}}
+        {{/isPrimitiveType}}
+        {{#hasValidation}}
+            {{#minLength}}
+            {{#maxLength}}
+        $asserts[] = new Assert\Range([
+            'min' => {{minLength}},
+            'max' => {{maxLength}}}
+        ]);
+            {{/maxLength}}
+            {{/minLength}}
+            {{^minLength}}
+            {{#maxLength}}
+        $asserts[] = new Assert\Range([
+            max => {{maxLength}}}
+        ]);
+            {{/maxLength}}
+            {{/minLength}}
+            {{#minLength}}
+            {{^maxLength}}
+        $asserts[] = new Assert\Range([
+            min => {{minLength}}
+        ]);
+            {{/maxLength}}
+            {{/minLength}}
+            {{#minimum}}
+            {{#exclusiveMinimum}}
+        $asserts[] = new Assert\GreaterThan({{minimum}});
+            {{/exclusiveMinimum}}
+            {{^exclusiveMinimum}}
+        $asserts[] = new Assert\GreaterThanOrEqual({{minimum}});
+            {{/exclusiveMinimum}}
+            {{/minimum}}
+            {{#maximum}}
+            {{#exclusiveMaximum}}
+        $asserts[] = new Assert\LessThan({{minimum}});
+            {{/exclusiveMaximum}}
+            {{^exclusiveMaximum}}
+        $asserts[] = new Assert\LessThanOrEqual({{minimum}});
+            {{/exclusiveMaximum}}
+            {{/maximum}}
+            {{#pattern}}
+        $asserts[] = new Assert\Regex("{{pattern}}");
+            {{/pattern}}
+        {{/hasValidation}}
+
+        // Validate input parameter
+        $this->validateData($inputData['{{paramName}}'], $asserts);
+
+        {{/allParams}}
+
+        // Call business logic with input data array.
+        $output = $this->{{classname}}Service->{{operationId}}($inputData);
+
+        $validResponses = [];
+
+        $assertsOutput = [];
+        {{#responses}}
+
+        {{^isPrimitiveType}}
+        {{^isListContainer}}
+            {{^isDate}}
+            {{^isDateTime}}
+            {{#hasDataType}}
+        $assertsOutput[] = new Assert\Type("{{dataType}}");
+            {{/hasDataType}}
+            {{/isDateTime}}
+            {{/isDate}}
+            {{#isDate}}
+        $assertsOutput[] = new Assert\Date();
+            {{/isDate}}
+            {{#isDateTime}}
+        $assertsOutput[] = new Assert\DateTime();
+            {{/isDateTime}}
+        {{/isListContainer}}
+        {{#isListContainer}}
+        $assertsOutput[] = new Assert\All([
+            new Assert\Type("{{{dataType}}}")
+        ]);
+        {{/isListContainer}}
+        {{/isPrimitiveType}}
+        {{#isPrimitiveType}}
+        {{#isListContainer}}
+        $assertsOutput[] = new Assert\All([
+            {{#items}}
+                {{#isString}}
+            new Assert\Type("string")
+                {{/isString}}
+                {{#isInteger}}
+            new Assert\Type("integer")
+                {{/isInteger}}
+                {{#isLong}}
+            new Assert\Type("long")
+                {{/isLong}}
+                {{#isBoolean}}
+            new Assert\Type("boolean")
+                {{/isBoolean}}
+                {{#isFloat}}
+            new Assert\Type("float")
+                {{/isFloat}}
+                {{#isDouble}}
+            new Assert\Type("double")
+                {{/isDouble}}
+            {{/items}}
+        ]);
+        {{/isListContainer}}
+        {{^isListContainer}}
+            {{#isString}}
+        $assertsOutput[] = new Assert\Type("string");
+            {{/isString}}
+            {{#isInteger}}
+        $assertsOutput[] = new Assert\Type("integer");
+            {{/isInteger}}
+            {{#isLong}}
+        $assertsOutput[] = new Assert\Type("long");
+            {{/isLong}}
+            {{#isBoolean}}
+        $assertsOutput[] = new Assert\Type("boolean");
+            {{/isBoolean}}
+            {{#isFloat}}
+        $assertsOutput[] = new Assert\Type("float");
+            {{/isFloat}}
+            {{#isDouble}}
+        $assertsOutput[] = new Assert\Type("double");
+            {{/isDouble}}
+        {{/isListContainer}}
+        {{/isPrimitiveType}}
+        {{#hasValidation}}
+            {{#minLength}}
+            {{#maxLength}}
+        $assertsOutput[] = new Assert\Range([
+            'min' => {{minLength}},
+            'max' => {{maxLength}}}
+        ]);
+            {{/maxLength}}
+            {{/minLength}}
+            {{^minLength}}
+            {{#maxLength}}
+        $assertsOutput[] = new Assert\Range([
+            max => {{maxLength}}}
+        ]);
+            {{/maxLength}}
+            {{/minLength}}
+            {{#minLength}}
+            {{^maxLength}}
+        $assertsOutput[] = new Assert\Range([
+            min => {{minLength}}
+        ]);
+            {{/maxLength}}
+            {{/minLength}}
+            {{#minimum}}
+            {{#exclusiveMinimum}}
+        $assertsOutput[] = new Assert\GreaterThan({{minimum}});
+            {{/exclusiveMinimum}}
+            {{^exclusiveMinimum}}
+        $assertsOutput[] = new Assert\GreaterThanOrEqual({{minimum}});
+            {{/exclusiveMinimum}}
+            {{/minimum}}
+            {{#maximum}}
+            {{#exclusiveMaximum}}
+        $assertsOutput[] = new Assert\LessThan({{minimum}});
+            {{/exclusiveMaximum}}
+            {{^exclusiveMaximum}}
+        $assertsOutput[] = new Assert\LessThanOrEqual({{minimum}});
+            {{/exclusiveMaximum}}
+            {{/maximum}}
+            {{#pattern}}
+        $assertsOutput[] = new Assert\Regex("{{pattern}}");
+            {{/pattern}}
+        {{/hasValidation}}
+
+        $validResponses['{{code}}'] = [
+            'message'   => '{{message}}',
+            'assertsOutput'  => $assertsOutput
+        ];
+        {{/responses}}
+
+        if (isset($validResponses[$output->responseCode])) {
+            // Get the response type indicated by the business logic
+            $response = $validResponses[$output->responseCode];
+        } elseif (isset($validResponses['default'])) {
+            $response = $validResponses['default'];
+        } else {
+            // We don't recognize this reponse type from the spec
+            return new Response($output->data, $output->responseCode);
+        }
+
+        // Check if we have a schema defined for the response type
+        if (!empty($response['assertsOutput'])) {
+            // Validate response type
+            $this->validateData($output->data, $response['assertsOutput']);
+        }
+
+        // Determine what to return as the response
+        if (!empty($output->data)) {
+            $responseData = $this->produceOutput($request, $output->data);
+        } else {
+            $responseData = $response['message'];
+        }
+
+        // Return response
+        return new Response($responseData, $output->responseCode);
+    }
+    {{/operation}}
+
+    private function validateData($data, $asserts)
+    {
+        $errors = $this->validator->validate($data, $asserts);
+
+        if (count($errors) > 0) {
+            $errorsString = (string)$errors;
+            throw new BadRequestHttpException($errorsString);
+        }
+    }
+
+    private function produceOutput(Request $request, $output)
+    {
+        $accept = $request->headers->has('accept')?$request->headers->get('accept'):'application/json';
+        switch ($accept) {
+            case 'application/json':
+                return $this->serializer->serialize($output, 'json');
+            case 'application/xml':
+                return $this->serializer->serialize($output, 'xml');
+            default:
+                throw new BadRequestHttpException('Unsupported return format requested');
+        }
+    }
+}
+{{/operations}}

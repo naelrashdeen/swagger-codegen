@@ -1,0 +1,159 @@
+<?php
+{{#models}}{{#model}}/*
+* {{classname}}
+*/
+namespace {{package}};
+
+use Symfony\Component\Validator\Constraints as Assert;
+
+class {{classname}}
+{
+
+	{{#vars}}
+	/**
+	{{#description}}
+	 * {{description}}
+	{{/description}}
+	{{^isPrimitiveType}}
+	{{^isListContainer}}
+		{{^isDate}}
+		{{^isDateTime}}
+	* @Assert\Type("{{datatype}}")
+		{{/isDateTime}}
+		{{/isDate}}
+		{{#isDate}}
+	* @Assert\Date()
+		{{/isDate}}
+		{{#isDateTime}}
+	* @Assert\DateTime()
+		{{/isDateTime}}
+	{{/isListContainer}}
+	{{#isListContainer}}
+	* @Assert\All({
+	 	{{#items}}
+	* 	@Assert\Type("{{datatype}}")
+		{{/items}}
+	* })
+	{{/isListContainer}}
+	{{/isPrimitiveType}}
+	{{#isPrimitiveType}}
+	{{#isListContainer}}
+	* @Assert\All({
+	 	{{#items}}
+			{{#isString}}
+	* 	@Assert\Type("string")
+			{{/isString}}
+			{{#isInteger}}
+	* 	@Assert\Type("integer")
+			{{/isInteger}}
+			{{#isLong}}
+	* 	@Assert\Type("long")
+			{{/isLong}}
+			{{#isBoolean}}
+	* 	@Assert\Type("boolean")
+			{{/isBoolean}}
+			{{#isFloat}}
+	* 	@Assert\Type("float")
+			{{/isFloat}}
+			{{#isDouble}}
+	* 	@Assert\Type("double")
+			{{/isDouble}}
+		{{/items}}
+	* })
+	{{/isListContainer}}
+	{{^isListContainer}}
+		{{#isString}}
+	* @Assert\Type("string")
+		{{/isString}}
+		{{#isInteger}}
+	* @Assert\Type("integer")
+		{{/isInteger}}
+		{{#isLong}}
+	* @Assert\Type("long")
+		{{/isLong}}
+		{{#isBoolean}}
+	* @Assert\Type("boolean")
+		{{/isBoolean}}
+		{{#isFloat}}
+	* @Assert\Type("float")
+		{{/isFloat}}
+		{{#isDouble}}
+	* @Assert\Type("double")
+		{{/isDouble}}
+	{{/isListContainer}}
+	{{/isPrimitiveType}}
+	{{#hasValidation}}
+		{{#minLength}}
+		{{#maxLength}}
+	* @Assert\Range(
+	*	min = {{minLength}},
+	*   max ={{maxLength}}}
+	* )
+		{{/maxLength}}
+		{{/minLength}}
+		{{^minLength}}
+		{{#maxLength}}
+	* @Assert\Range(
+	*   max ={{maxLength}}}
+	* )
+		{{/maxLength}}
+		{{/minLength}}
+		{{#minLength}}
+		{{^maxLength}}
+	* @Assert\Range(
+	*	min = {{minLength}}
+	* )
+		{{/maxLength}}
+		{{/minLength}}
+		{{#minimum}}
+		{{#exclusiveMinimum}}
+	* @Assert\GreaterThan({{minimum}})
+		{{/exclusiveMinimum}}
+		{{^exclusiveMinimum}}
+	* @Assert\GreaterThanOrEqual({{minimum}})
+		{{/exclusiveMinimum}}
+		{{/minimum}}
+		{{#maximum}}
+		{{#exclusiveMaximum}}
+	* @Assert\LessThan({{minimum}})
+		{{/exclusiveMaximum}}
+		{{^exclusiveMaximum}}
+	* @Assert\LessThanOrEqual({{minimum}})
+		{{/exclusiveMaximum}}
+		{{/maximum}}
+		{{#pattern}}
+	* @Assert\Regex("{{pattern}}")
+		{{/pattern}}
+	{{/hasValidation}}
+	 * @var {{datatype}}
+	 */
+	protected ${{name}};
+
+	{{/vars}}
+
+
+
+	{{#vars}}
+
+	/**
+	 * @return {{datatype}} ${{name}}
+	 */
+
+	public function get{{nameInCamelCase}}()
+	{
+		return $this->{{name}};
+	}
+
+	/**
+	 * @param @var {{datatype}}
+	 */
+
+	public function set{{nameInCamelCase}}(${{name}})
+	{
+		$this->{{name}} = ${{name}}
+	}
+
+	{{/vars}}
+}
+
+	{{/model}}{{/models}}

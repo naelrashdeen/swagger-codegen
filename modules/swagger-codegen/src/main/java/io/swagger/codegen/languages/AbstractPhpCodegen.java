@@ -252,7 +252,7 @@ public abstract class AbstractPhpCodegen extends DefaultCodegen implements Codeg
     }
 
    @Override
-    public String escapeReservedWord(String name) {           
+    public String escapeReservedWord(String name) {
         if(this.reservedWordsMappings().containsKey(name)) {
             return this.reservedWordsMappings().get(name);
         }
