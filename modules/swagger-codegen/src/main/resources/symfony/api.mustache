@@ -15,13 +15,13 @@ use {{classname}}ServiceInterface;
 {{#operations}}
 class {{classname}}
 {
-    private ${{classname}}Service;
+    private ${{baseName}}Service;
     private $validator;
     private $serializer;
 
-    public function set{{classname}}Service({{classname}}ServiceInterface $service)
+    public function set{{baseName}}Service({{classname}}ServiceInterface $service)
     {
-        $this->{{classname}}Service = $service;
+        $this->{{baseName}}Service = $service;
     }
 
     public function setValidator(ValidatorInterface $validator)

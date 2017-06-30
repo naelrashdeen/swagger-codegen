@@ -25,13 +25,13 @@ use UserApiServiceInterface;
 
 class UserApi
 {
-    private $UserApiService;
+    private $UserService;
     private $validator;
     private $serializer;
 
-    public function setUserApiService(UserApiServiceInterface $service)
+    public function setUserService(UserApiServiceInterface $service)
     {
-        $this->UserApiService = $service;
+        $this->UserService = $service;
     }
 
     public function setValidator(ValidatorInterface $validator)

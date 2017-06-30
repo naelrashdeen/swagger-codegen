@@ -25,13 +25,13 @@ use StoreApiServiceInterface;
 
 class StoreApi
 {
-    private $StoreApiService;
+    private $StoreService;
     private $validator;
     private $serializer;
 
-    public function setStoreApiService(StoreApiServiceInterface $service)
+    public function setStoreService(StoreApiServiceInterface $service)
     {
-        $this->StoreApiService = $service;
+        $this->StoreService = $service;
     }
 
     public function setValidator(ValidatorInterface $validator)

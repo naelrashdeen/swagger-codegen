@@ -3,38 +3,41 @@
 
 parameters:
     jms_serializer.camel_case_naming_strategy.class: JMS\Serializer\Naming\IdenticalPropertyNamingStrategy
-    app.service.PetApi: 'api.mocks.PetApi'
-    app.service.StoreApi: 'api.mocks.StoreApi'
-    app.service.UserApi: 'api.mocks.UserApi'
+    app.service.Pet: 'api.mocks.Pet'
+    app.service.Store: 'api.mocks.Store'
+    app.service.User: 'api.mocks.User'
 
 services:
-    app.controller.PetApi:
+    app.controller.Pet:
       class: ApiBundle\Controllers\PetApi
       calls:
-          - [setPetApiService,  [%app.service.PetApiService%]]
+          - [setPetService,  [%app.service.Pet%]]
           - [setValidator,      ['@validator']]
           - [setSerializer,     ['@jms_serializer']]
 
-    api.mocks.PetApi:
-      class: AppBundle\Service\MockPetApiService
+# Need to figure out if the Mock classes should be in the ApiBundle or something else?
+    api.mocks.Pet:
+      class: ApiBundle\Service\MockPetService
 
-    app.controller.StoreApi:
+    app.controller.Store:
       class: ApiBundle\Controllers\StoreApi
       calls:
-          - [setStoreApiService,  [%app.service.StoreApiService%]]
+          - [setStoreService,  [%app.service.Store%]]
           - [setValidator,      ['@validator']]
           - [setSerializer,     ['@jms_serializer']]
 
-    api.mocks.StoreApi:
-      class: AppBundle\Service\MockStoreApiService
+# Need to figure out if the Mock classes should be in the ApiBundle or something else?
+    api.mocks.Store:
+      class: ApiBundle\Service\MockStoreService
 
-    app.controller.UserApi:
+    app.controller.User:
       class: ApiBundle\Controllers\UserApi
       calls:
-          - [setUserApiService,  [%app.service.UserApiService%]]
+          - [setUserService,  [%app.service.User%]]
           - [setValidator,      ['@validator']]
           - [setSerializer,     ['@jms_serializer']]
 
-    api.mocks.UserApi:
-      class: AppBundle\Service\MockUserApiService
+# Need to figure out if the Mock classes should be in the ApiBundle or something else?
+    api.mocks.User:
+      class: ApiBundle\Service\MockUserService
 

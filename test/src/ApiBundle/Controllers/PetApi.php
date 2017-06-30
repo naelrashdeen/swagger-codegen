@@ -25,13 +25,13 @@ use PetApiServiceInterface;
 
 class PetApi
 {
-    private $PetApiService;
+    private $PetService;
     private $validator;
     private $serializer;
 
-    public function setPetApiService(PetApiServiceInterface $service)
+    public function setPetService(PetApiServiceInterface $service)
     {
-        $this->PetApiService = $service;
+        $this->PetService = $service;
     }
 
     public function setValidator(ValidatorInterface $validator)

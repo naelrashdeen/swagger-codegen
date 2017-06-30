@@ -6,22 +6,23 @@ parameters:
     jms_serializer.camel_case_naming_strategy.class: JMS\Serializer\Naming\IdenticalPropertyNamingStrategy
 {{#apis}}
 {{#operations}}
-    app.service.{{classname}}: 'api.mocks.{{classname}}'
+    app.service.{{baseName}}: 'api.mocks.{{baseName}}'
 {{/operations}}
 {{/apis}}
 
 services:
 {{#apis}}
 {{#operations}}
-    app.controller.{{classname}}:
+    app.controller.{{baseName}}:
       class: ApiBundle\{{package}}\{{classname}}
       calls:
-          - [set{{classname}}Service,  [%app.service.{{classname}}Service%]]
+          - [set{{baseName}}Service,  [%app.service.{{baseName}}%]]
           - [setValidator,      ['@validator']]
           - [setSerializer,     ['@jms_serializer']]
 
-    api.mocks.{{classname}}:
-      class: AppBundle\Service\Mock{{classname}}Service
+# Need to figure out if the Mock classes should be in the ApiBundle or something else?
+    api.mocks.{{baseName}}:
+      class: ApiBundle\Service\Mock{{baseName}}Service
 
 {{/operations}}
 {{/apis}}
