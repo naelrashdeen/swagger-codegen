@@ -1,0 +1,14 @@
+{{#apiInfo}}
+{{#apis}}
+{{#operations}}
+{{#operation}}
+
+{{baseName}}_{{operationId}}:
+  path: {{path}}
+  defaults:  { _controller: app.controller.{{baseName}}:{{operationId}} }
+  requirements:
+      _method: {{httpMethod}}
+{{/operation}}
+{{/operations}}
+{{/apis}}
+{{/apiInfo}}

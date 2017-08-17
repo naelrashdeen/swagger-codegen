@@ -1,0 +1,120 @@
+
+Pet_addPet:
+  path: /pet
+  defaults:  { _controller: app.controller.Pet:addPet }
+  requirements:
+      _method: POST
+
+Pet_updatePet:
+  path: /pet
+  defaults:  { _controller: app.controller.Pet:updatePet }
+  requirements:
+      _method: PUT
+
+Pet_findPetsByStatus:
+  path: /pet/findByStatus
+  defaults:  { _controller: app.controller.Pet:findPetsByStatus }
+  requirements:
+      _method: GET
+
+Pet_findPetsByTags:
+  path: /pet/findByTags
+  defaults:  { _controller: app.controller.Pet:findPetsByTags }
+  requirements:
+      _method: GET
+
+Pet_deletePet:
+  path: /pet/{petId}
+  defaults:  { _controller: app.controller.Pet:deletePet }
+  requirements:
+      _method: DELETE
+
+Pet_getPetById:
+  path: /pet/{petId}
+  defaults:  { _controller: app.controller.Pet:getPetById }
+  requirements:
+      _method: GET
+
+Pet_updatePetWithForm:
+  path: /pet/{petId}
+  defaults:  { _controller: app.controller.Pet:updatePetWithForm }
+  requirements:
+      _method: POST
+
+Pet_uploadFile:
+  path: /pet/{petId}/uploadImage
+  defaults:  { _controller: app.controller.Pet:uploadFile }
+  requirements:
+      _method: POST
+
+Store_getInventory:
+  path: /store/inventory
+  defaults:  { _controller: app.controller.Store:getInventory }
+  requirements:
+      _method: GET
+
+Store_placeOrder:
+  path: /store/order
+  defaults:  { _controller: app.controller.Store:placeOrder }
+  requirements:
+      _method: POST
+
+Store_deleteOrder:
+  path: /store/order/{orderId}
+  defaults:  { _controller: app.controller.Store:deleteOrder }
+  requirements:
+      _method: DELETE
+
+Store_getOrderById:
+  path: /store/order/{orderId}
+  defaults:  { _controller: app.controller.Store:getOrderById }
+  requirements:
+      _method: GET
+
+User_createUser:
+  path: /user
+  defaults:  { _controller: app.controller.User:createUser }
+  requirements:
+      _method: POST
+
+User_createUsersWithArrayInput:
+  path: /user/createWithArray
+  defaults:  { _controller: app.controller.User:createUsersWithArrayInput }
+  requirements:
+      _method: POST
+
+User_createUsersWithListInput:
+  path: /user/createWithList
+  defaults:  { _controller: app.controller.User:createUsersWithListInput }
+  requirements:
+      _method: POST
+
+User_loginUser:
+  path: /user/login
+  defaults:  { _controller: app.controller.User:loginUser }
+  requirements:
+      _method: GET
+
+User_logoutUser:
+  path: /user/logout
+  defaults:  { _controller: app.controller.User:logoutUser }
+  requirements:
+      _method: GET
+
+User_deleteUser:
+  path: /user/{username}
+  defaults:  { _controller: app.controller.User:deleteUser }
+  requirements:
+      _method: DELETE
+
+User_getUserByName:
+  path: /user/{username}
+  defaults:  { _controller: app.controller.User:getUserByName }
+  requirements:
+      _method: GET
+
+User_updateUser:
+  path: /user/{username}
+  defaults:  { _controller: app.controller.User:updateUser }
+  requirements:
+      _method: PUT

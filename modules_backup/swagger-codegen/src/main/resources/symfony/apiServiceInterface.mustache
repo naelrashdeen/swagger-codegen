@@ -1,0 +1,31 @@
+<?php
+
+{{>licenseInfo}}
+
+namespace App\Http\Controllers;
+
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use JMS\Serializer\Serializer;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
+{{#operations}}
+interface {{classname}}ServiceInterface
+{
+
+    {{#operation}}
+    /**
+     * Operation {{{operationId}}}
+     *
+     * {{{summary}}}.
+     *
+     * @param array $inputData Associative array containing the input data
+     *
+     * @return OutputData 
+     */
+    public function {{operationId}}(array $inputData);
+        
+    {{/operation}}
+
+}
+{{/operations}}

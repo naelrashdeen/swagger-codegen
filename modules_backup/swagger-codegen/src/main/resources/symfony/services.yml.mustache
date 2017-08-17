@@ -1,0 +1,29 @@
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/service_container.html
+
+{{#apiInfo}}
+parameters:
+    jms_serializer.camel_case_naming_strategy.class: JMS\Serializer\Naming\IdenticalPropertyNamingStrategy
+{{#apis}}
+{{#operations}}
+    app.service.{{baseName}}: 'api.mocks.{{baseName}}'
+{{/operations}}
+{{/apis}}
+
+services:
+{{#apis}}
+{{#operations}}
+    app.controller.{{baseName}}:
+      class: ApiBundle\{{package}}\{{classname}}
+      calls:
+          - [set{{baseName}}Service,  [%app.service.{{baseName}}%]]
+          - [setValidator,      ['@validator']]
+          - [setSerializer,     ['@jms_serializer']]
+
+# Need to figure out if the Mock classes should be in the ApiBundle or something else?
+    api.mocks.{{baseName}}:
+      class: ApiBundle\Service\Mock{{baseName}}Service
+
+{{/operations}}
+{{/apis}}
+{{/apiInfo}}
